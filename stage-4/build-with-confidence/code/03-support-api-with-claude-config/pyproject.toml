@@ -1,0 +1,12 @@
+[project]
+name = "support-api"
+version = "0.1.0"
+description = "Reference Flask-style support API for Stage 4"
+requires-python = ">=3.11"
+dependencies = [
+  "flask>=3.0.0",
+  "pytest>=8.0.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

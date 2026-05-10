@@ -1,0 +1,50 @@
+name: Claude Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Claude Code
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Get PR diff
+        run: git diff origin/${{ github.base_ref }}...HEAD > pr_diff.txt
+
+      - name: Run Claude review
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          DIFF_CONTENT=$(cat pr_diff.txt)
+
+          claude -p "Review this pull request diff for bugs, security vulnerabilities, missing error handling, and violations of our architecture conventions.
+
+Focus on real issues, skip style preferences and things the linter handles.
+
+PR diff:
+${DIFF_CONTENT}" \
+            --output-format json \
+            --json-schema .claude/review-schema.json \
+            > claude_review.json
+
+      - name: Extract structured review
+        run: jq -r '.result | fromjson' claude_review.json > review.json
+
+      - name: Post findings
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REVIEW_JSON_PATH: review.json
+        run: bash scripts/post_findings.sh

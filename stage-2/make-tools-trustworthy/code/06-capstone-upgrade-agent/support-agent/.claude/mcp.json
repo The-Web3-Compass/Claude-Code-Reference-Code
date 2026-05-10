@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "support-agent-tools": {
+      "command": "python3",
+      "args": ["mcp_server.py"],
+      "cwd": "${workspaceFolder}/stage-2/make-tools-trustworthy/code/06-capstone-upgrade-agent/support-agent",
+      "env": {
+        "ANTHROPIC_API_KEY": "${env:ANTHROPIC_API_KEY}"
+      }
+    }
+  }
+}

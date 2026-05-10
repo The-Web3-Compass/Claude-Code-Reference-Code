@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "support-agent-tools": {
+      "command": "python",
+      "args": ["mcp_server.py"],
+      "cwd": "${workspaceFolder}/stage-2/make-tools-trustworthy/code/05-basic-mcp/support-agent",
+      "env": {
+        "ANTHROPIC_API_KEY": "${env:ANTHROPIC_API_KEY}"
+      }
+    }
+  }
+}
